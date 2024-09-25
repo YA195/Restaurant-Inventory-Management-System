@@ -1,0 +1,89 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<link rel="stylesheet" href="~/css/Home.css">
+
+<div class="date-container">
+    <label for="date">Choose a date:</label>
+    <form method="get">
+        <input type="date" id="date" name="SelectedDate" value="@Model.SelectedDate?.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
+    </form>
+</div>
+
+<!-- Table to display data -->
+<div id="tableContainer">
+    <table class="styled-table" id="dataTable">
+        <tr>
+            <th>الصنف</th>
+            <th>الكميه</th>
+        </tr>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Quantity</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<!-- Button to generate PDF -->
+<button onclick="generatePDF()" class="print-btn">Print as PDF</button>
+
+<!-- Include html2pdf library for simpler PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+    // Function to sort the table
+    function sortTable() {
+        var table = document.getElementById("dataTable");
+        var rows = Array.from(table.rows).slice(1); // Exclude header row
+
+        // Sort rows based on the first cell (الصنف) using localeCompare for Arabic
+        rows.sort(function (a, b) {
+            var textA = a.cells[0].innerText;
+            var textB = b.cells[0].innerText;
+            return textA.localeCompare(textB, 'ar'); // Use Arabic locale
+        });
+
+        // Append sorted rows back to the table
+        rows.forEach(function (row) {
+            table.appendChild(row);
+        });
+    }
+
+    // Generate PDF function
+    function generatePDF() {
+        // Get the HTML element to convert to PDF
+        var element = document.getElementById('tableContainer');
+
+        // Create a new instance of html2pdf
+        var opt = {
+            margin: 1,
+            filename: 'table-data.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            // Custom styles for PDF output
+            html2canvas: {
+                style: {
+                    fontSize: '20px'  // Adjust this size as needed for PDF
+                }
+            }
+        };
+
+        // Generate the PDF using html2pdf with custom options
+        html2pdf()
+            .from(element)            // Convert from HTML element
+            .set(opt)                // Set the options
+            .save();                  // Save the PDF
+    }
+
+    // Sort the table on page load
+    window.onload = function () {
+        sortTable();
+    };
+</script>
