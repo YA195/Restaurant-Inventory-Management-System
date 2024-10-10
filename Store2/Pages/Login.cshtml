@@ -1,0 +1,101 @@
+﻿@page "/"
+@model Store2.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Login Form</title>
+    <link rel="stylesheet" href="~/css/Home.css">
+</head>
+<body>
+    <div class="main-content">
+        <div class="wrapper">
+            <div class="title">
+                Login Form
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-danger">@Model.Message</div>
+            }
+            <form method="post">
+                <div class="field">
+                    <input type="text" name="username" required placeholder="User Name" />
+                </div>
+                <div class="field">
+                    <input type="password" name="password" required placeholder="Password" />
+                </div>
+                <div class="content">
+                    <div class="checkbox">
+                        <input type="checkbox" id="remember-me" />
+                        <label for="remember-me">Remember me</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <input type="submit" value="Login" class="login-btn" />
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+<style>
+    .wrapper {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #4CAF50;
+    }
+
+    .field {
+        margin-bottom: 15px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input.login-btn {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+    input.login-btn {
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+
+        input.login-btn:hover {
+            background-color: #45a049;
+        }
+
+    .alert {
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+    }
+</style>

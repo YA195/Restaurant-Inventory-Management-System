@@ -1,10 +1,14 @@
-﻿/* style.css */
-body {
+﻿body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
-    margin: 0;
-    padding: 20px;
+    
 }
+
+.main-content {
+    padding-top: 60px; 
+    margin: 20px;
+}
+
 
 .date-container {
     margin-bottom: 20px;
@@ -22,7 +26,6 @@ input[type="date"] {
     border-radius: 4px;
 }
 
-/* Table styles */
 .styled-table {
     width: 100%;
     border-collapse: collapse;
@@ -63,3 +66,73 @@ input[type="date"] {
     .print-btn:hover {
         background-color: #45a049;
     }
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+    .styled-table th, .styled-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .styled-table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .styled-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .styled-table tr:hover {
+        background-color: #ddd;
+    }
+h1 {
+    font-size: 2em;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+        border-color: #007BFF;
+        outline: none;
+    }
+
+button {
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+.navbar {
+    position: fixed !important;
+    width: 100% !important;
+    margin-top: -20px !important;
+    background-color: #4caf65 !important;
+
+}

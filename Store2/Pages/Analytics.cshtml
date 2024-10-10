@@ -1,0 +1,84 @@
+﻿@page "/Analytics"
+@model AnalyticsModel
+@{
+    ViewData["Title"] = "Analytics";
+    decimal totalPrice = 0; 
+}
+
+<div class="main-content">
+    <link rel="stylesheet" href="~/css/Home.css">
+
+    <h1>تقارير</h1>
+
+    <div class="date-container">
+        <form method="get">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startdate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="enddate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" onchange="this.form.submit()" />
+        </form>
+    </div>
+
+    <div id="tableContainer">
+        <table class="styled-table" id="dataTable">
+            <tr>
+                <th>الاسم</th>
+                <th>وصف الصنف</th>
+                <th>العدد</th>
+                <th>السعر</th>
+                <th>إجمالي السعر</th>
+            </tr>
+            @foreach (var item in Model.Items)
+            {
+                decimal itemTotalPrice = item.Price * item.Quantity; 
+                totalPrice += itemTotalPrice; 
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price</td> 
+                    <td>@itemTotalPrice</td> 
+                </tr>
+            }
+            <tr>
+                <td colspan="4" style="text-align: right;"><strong>الإجمالي</strong></td>
+                <td><strong>@totalPrice</strong></td> 
+            </tr>
+        </table>
+    </div>
+
+    <button onclick="generatePDF()" class="print-btn">Print as PDF</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+    function generatePDF() {
+        var element = document.getElementById('tableContainer');
+        var opt = {
+            margin: 1,
+            filename: 'analytics-data.pdf',
+            image: { type: 'jpeg', quality: 2 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        html2pdf().from(element).set(opt).save();
+    }
+
+    window.onload = function () {
+        sortTable();
+    };
+
+    function sortTable() {
+        var table = document.getElementById("dataTable");
+        var rows = Array.from(table.rows).slice(1);
+        rows.sort(function (a, b) {
+            var textA = a.cells[0].innerText;
+            var textB = b.cells[0].innerText;
+            return textA.localeCompare(textB, 'ar');
+        });
+        rows.forEach(function (row) {
+            table.appendChild(row);
+        });
+    }
+</script>

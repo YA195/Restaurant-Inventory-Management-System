@@ -1,0 +1,136 @@
+﻿@page
+@model Store2.Pages.AddItemModel
+@{
+    ViewData["Title"] = "الاصناف";
+}
+
+<div class="main-content">
+    <h1>@ViewData["Title"]</h1>
+    <link rel="stylesheet" href="~/css/Home.css">
+
+    <form method="post">
+        <input type="hidden" asp-for="Item.Id" />
+
+        <div>
+            <label for="itemName">اسم الصنف</label>
+            <input asp-for="Item.Name" required />
+        </div>
+
+        <div>
+            <label asp-for="Item.Description">وصف الصنف</label>
+            <input asp-for="Item.Description" required />
+        </div>
+
+        <div>
+            <label asp-for="Item.Price">السعر</label>
+            <input asp-for="Item.Price" type="number" step="1.00 " min="0.00" required />
+        </div>
+
+        <button type="submit">اضافة</button>
+    </form>
+
+    <h2>الاصناف الموجوده</h2>
+    <table class="styled-table" id="itemsTable">
+        <thead>
+            <tr>
+                <th>اسم الصنف</th>
+                <th>وصف الصنف</th>
+                <th>السعر</th>
+                <th>تاريخ الاضافه / التعديل</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>
+                        <input type="text" value="@item.Description" onblur="updateItem(@item.Id, this.value, null)" />
+                    </td>
+                    <td>
+                        <input type="number" min="0.00" step="1.00" value="@item.Price" onblur="updateItem(@item.Id, null, this.value)" />
+                    </td>
+                    <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                    
+                    @*this is for deleting parametly from all database*@
+
+                    @*
+                     <td>
+                         <button type="button" onclick="deleteItem(@item.Id)"> حذف </button>
+                     </td>
+                     *@
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@*the JS For Handling Errors*@
+
+@section Scripts {
+    <script>
+        async function deleteItem(itemId) {
+            try {
+                console.log("Deleting item with ID:", itemId);
+
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const response = await fetch(`/AddItem?handler=Delete&id=${itemId}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    location.reload(); 
+                } else {
+                    alert("Error deleting item: " + result.message);
+                }
+            } catch (error) {
+                console.error("Failed to delete item:", error);
+                alert("An error occurred while deleting the item.");
+            }
+        }
+
+
+        async function updateItem(itemId, description, price) {
+            try {
+                const params = new URLSearchParams();
+                if (description !== null && description !== "") {
+                    params.append('description', description);
+                }
+                if (price !== null) {
+                    params.append('price', price);
+                }
+
+                const response = await fetch(`/AddItem?handler=Update&id=${itemId}&${params.toString()}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    alert("Error updating item: " + result.message);
+                } else {
+                    console.log("Item updated successfully:", result);
+                }
+            } catch (error) {
+                console.error("Failed to update item:", error);
+                alert("An error occurred while updating the item.");
+            }
+        }
+
+
+    </script>
+}
+    

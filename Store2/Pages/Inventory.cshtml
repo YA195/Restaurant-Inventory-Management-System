@@ -1,0 +1,70 @@
+﻿@page
+@model Store2.Pages.InventoryModel
+@{
+    ViewData["Title"] = "Daily Inventory";
+}
+
+<link rel="stylesheet" href="~/css/Home.css">
+
+<div class="main-content">
+    <h2>الجرد اليومي</h2>
+
+    <form method="post">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>اسم الصنف</th>
+                    <th>الوصف</th>
+                    <th>الكميه</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <input type="number" name="Counts[@item.Id]" value="@(Model.Counts.ContainsKey(item.Id) ? Model.Counts[item.Id].ToString() : "0")"
+                                   min="0"
+                                   onchange="updateQuantity(@item.Id, this.value)" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button type="submit" >تأكيد</button>
+    </form>
+</div>
+<script>
+    async function updateQuantity(itemId, quantity) {
+        try {
+            const response = await fetch(`/Inventory?handler=UpdateCount&itemId=${itemId}&quantity=${quantity}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                console.log(`Quantity updated for item ID ${itemId} to ${quantity}`);
+            } else {
+                console.error(`Error updating quantity: ${result.message}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('change', (event) => {
+            const itemId = event.target.name.split('[')[1].split(']')[0]; 
+            const quantity = event.target.value;
+
+            updateQuantity(itemId, quantity);
+            event.preventDefault(); 
+        });
+    });
+</script>
